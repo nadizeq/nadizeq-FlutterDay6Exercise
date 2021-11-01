@@ -5,4 +5,6 @@ class DisplayText extends Cubit <String>{
   DisplayText() : super ('');
 
   void textInput (String text)=> emit (text);
+
+  void textClear () => emit('');
 }

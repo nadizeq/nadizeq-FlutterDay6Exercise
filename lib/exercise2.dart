@@ -13,6 +13,8 @@ class Exercise2State extends State <Exercise2App>{
 
   final myController = TextEditingController();
 
+  String refreshText = '';
+
   @override
   void dispose() {
     myController.dispose();
@@ -26,6 +28,7 @@ class Exercise2State extends State <Exercise2App>{
       appBar:AppBar(title: Center(child: Text('Exercise 2'),),),
       
       body: Container(
+        
         decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topRight,
@@ -39,20 +42,45 @@ class Exercise2State extends State <Exercise2App>{
           child: Center(
         child: Column(
 
+          
+          
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: TextField(
-          controller: myController,
-        ),
-      ),
+            Center(
+              child: Text('Click at the text field, enter text and click green tick button or enter key. Then click floating button to display text',
+              style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),),
+            ),
+            Padding(padding: EdgeInsets.all(10)),
+            
+            BlocBuilder<DisplayText, String>(
+              builder: (context, state) {
+                return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextField(
+                      controller: myController,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25,
+                      ),
+                      onEditingComplete: (){
+                        context.read<DisplayText>().textInput(myController.text.toString());
+
+                        FocusScope.of(context).unfocus();
+                      },
+                      
+                    ),
+                  );
+              },
+            ),
       
       
             BlocBuilder<DisplayText, String>(builder: (context,text){
               return FloatingActionButton(
                 onPressed: () {
-                  context.read<DisplayText>().textInput(myController.text.toString());
+                  
           showDialog(
             context: context,
             builder: (context) {
@@ -60,12 +88,24 @@ class Exercise2State extends State <Exercise2App>{
                 // Retrieve the text the that user has entered by using the
                 // TextEditingController.
                 content: Text('$text'.toUpperCase()),
+                actions: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: TextStyle(
+                        fontSize: 15
+                      ),
+                    ),
+                    child: Text('CLOSE'),
+                    onPressed: (){                     
+                      Navigator.of(context, rootNavigator: true).pop('dialog');
+                      context.read<DisplayText>().textInput(refreshText);
+                    },
+                  ),
+                ],
               );
             },
           );
         },
-        
-        tooltip: 'Show me the value!',
         child: const Icon(Icons.text_fields),
               );
             }),
